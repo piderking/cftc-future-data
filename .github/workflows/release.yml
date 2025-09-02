@@ -1,6 +1,9 @@
 name: Release Workflow
 
-on: [push]
+on:
+  schedule:
+    - cron: "0 12 * * 1" # Every Monday at 12:00 UTC
+  workflow_dispatch:      # Allow manual trigger too
 
 jobs:
   release:
@@ -36,24 +39,37 @@ jobs:
         with:
           files: final/*
           dest: data.zip # Name of the output zip file
+      
+      # create teh tag
+      - name: Create Tag
+        id: tag_step
+        run: |
+          TAG=weekly-$(date +'%Y-%m-%d')
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag $TAG
+          git push origin $TAG
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
+      # creat the release
       - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Weekly Release ${{ github.ref }}
-          body_path: data.zip
+          tag_name: ${{ steps.tag_step.outputs.tag }}
+          release_name: Weekly Release ${{ steps.tag_step.outputs.tag }}
+          body: "Automated weekly data release"
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset (Example - replace with your build process)
+      - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./my-artifact.zip # Path to your built artifact
-          asset_name: weekly-${{ github.ref_name }}-${{ steps.get_date.outputs.date }}.zip
+          asset_path: ./data.zip
+          asset_name: data-${{ steps.tag_step.outputs.tag }}.zip
           asset_content_type: application/zip
