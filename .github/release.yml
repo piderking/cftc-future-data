@@ -1,0 +1,58 @@
+name: Release Workflow
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers on pushes to tags starting with 'v'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to create releases and upload assets
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+
+      - name: Generate Future Data
+        run: pip3 install -r req.txt
+
+      - name: Generate Future Data
+        run: python3 futures.py
+      
+      - name: Generate Metal Data
+        run: python3 metals.py
+
+      - name: Zip Files
+        uses: vimtor/action-zip@v1.2 # Or montudor/action-zip@v1
+        with:
+          files: final/*
+          dest: data.zip # Name of the output zip file
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Weekly Release ${{ github.ref }}
+          body_path: data.zip
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset (Example - replace with your build process)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./my-artifact.zip # Path to your built artifact
+          asset_name: my-artifact-${{ github.ref_name }}.zip
+          asset_content_type: application/zip
