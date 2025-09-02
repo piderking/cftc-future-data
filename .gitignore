@@ -1,3 +1,4 @@
-data/*
+data/futures/*
+data/metals/*
 final/*
 **/*.pyc
