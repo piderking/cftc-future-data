@@ -74,3 +74,17 @@ jobs:
           asset_path: ./data.zip
           asset_name: data-${{ steps.tag_step.outputs.tag }}.zip
           asset_content_type: application/zip
+
+      - name: Send notification email
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: piderking8@gmail.com
+          password: ${{ secrets.GMAIL_APP_PASSWORD }} # 16-char app password
+          subject: "Weekly Release ${{ steps.tag_step.outputs.tag }}"
+          to: toddbowman1919@gmail.com
+          from: "piderking8@gmail.com"
+          body: "✅ Weeky CFTC Data Report."
+          attachments: data.zip
