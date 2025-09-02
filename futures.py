@@ -5,6 +5,10 @@ from datetime import timedelta
 
 from tuesday import get_tuesdays_of_year_to_now
 
+from dirs import make_dirs
+
+make_dirs()
+
 # get all tuesdays
 dates = [tues.strftime("%m%d") for tues in get_tuesdays_of_year_to_now()]
 
