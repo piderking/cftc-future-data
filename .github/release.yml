@@ -1,9 +1,6 @@
 name: Release Workflow
 
-on:
-  push:
-    tags:
-      - 'v*' # Triggers on pushes to tags starting with 'v'
+on: [push]
 
 jobs:
   release:
