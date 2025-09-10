@@ -9,7 +9,7 @@ def get_tuesdays_of_year_to_now():
     current_year = today.year
 
     # Find the first day of the current year
-    first_day_of_year = date(current_year, 1, 1)
+    first_day_of_year = date(current_year-2, 1, 1)
 
     # Calculate the offset to the first Tuesday of the year
     # weekday() returns 0 for Monday, 1 for Tuesday, ..., 6 for Sunday
