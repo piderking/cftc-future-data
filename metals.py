@@ -8,19 +8,19 @@ from dirs import make_dirs
 
 make_dirs()
 # get all tuesdays
-dates = [tues.strftime("%m%d") for tues in get_tuesdays_of_year_to_now()]
+dates = [(tues.strftime("%Y"), tues.strftime("%m%d%y")) for tues in get_tuesdays_of_year_to_now()]
 # dates = ["0107"]
 types = [
     "GOLD",
     "SILVER",
-    "COPPER #1"
+    "COPPER- #1"
     
     ]
 
-for date in dates:
+for (year, date) in dates:
     if not os.path.exists(f"./data/metals/{date}.html"):
 
-        response = requests.get(f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2025/futures/deacmxsf{date}25.htm")
+        response = requests.get(f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/{year}/futures/deacmxsf{date}.htm")
 
         file = open(f"./data/metals/{date}.html", "w")
         file.write(response.text)
@@ -38,7 +38,7 @@ output = {
     ty: [] for ty in types
     
 }
-for date in dates:
+for (year, date) in dates:
     file = open(f"./data/metals/{date}.html", 'r')
 
     lines = open(f"./data/metals/{date}.html", 'r').readlines()
@@ -67,7 +67,7 @@ for ty in types:
     file = open(f"./final/{ty}.csv", "w") 
     outstr = "Date,OI,Non-Commercial Long,Non-Comercial Short,Commercial Long,Commercial Short\n"
 
-    for date, c in zip(dates, output[ty]):
+    for (year, date), c in zip(dates, output[ty]):
         outstr += ",".join([date] + [str(s) for s in c]) + '\n'
 
     file.write(outstr)

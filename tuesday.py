@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 
+TOTAL_YEARS = 2
 def get_tuesdays_of_year_to_now():
     """
     Returns a list of all Tuesdays from the first Tuesday of the current year
@@ -9,7 +10,7 @@ def get_tuesdays_of_year_to_now():
     current_year = today.year
 
     # Find the first day of the current year
-    first_day_of_year = date(current_year-2, 1, 1)
+    first_day_of_year = date(current_year - 2, 1, 1) # -2
 
     # Calculate the offset to the first Tuesday of the year
     # weekday() returns 0 for Monday, 1 for Tuesday, ..., 6 for Sunday

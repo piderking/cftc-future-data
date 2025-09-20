@@ -1,4 +1,5 @@
-data/futures/*
-data/metals/*
+# See if not having to redownload files is the issue
+# data/futures/*
+# data/metals/*
 final/*
 **/*.pyc
